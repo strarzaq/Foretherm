@@ -1,5 +1,3 @@
----
----
 <!DOCTYPE html>
 
 <html lang="en">
@@ -231,7 +229,6 @@ border-bottom: 1px solid var(–border);
 font-weight: 400;
 }
 
-/* Summary rows */
 .row-summary td {
 padding: 10px 12px;
 border-bottom: 1px solid var(–border);
@@ -259,7 +256,6 @@ transform: rotate(90deg);
 color: var(–accent);
 }
 
-/* Detail rows */
 .row-detail { display: none; }
 .row-detail.open { display: table-row; }
 
@@ -269,9 +265,7 @@ border-bottom: 1px solid var(–border);
 background: var(–surface2);
 }
 
-.detail-inner {
-padding: 16px 20px 20px 32px;
-}
+.detail-inner { padding: 16px 20px 20px 32px; }
 
 .detail-grid {
 display: grid;
@@ -334,7 +328,6 @@ gap: 6px;
 .cond-label { color: var(–dim); }
 .cond-value { color: var(–text); }
 
-/* Badges */
 .risk-cell {
 font-weight: 700;
 font-size: 10px;
@@ -428,19 +421,19 @@ footer { flex-direction: column; gap: 4px; }
 
   <div class="legend">
     <span class="legend-item">
-      <span class="legend-dot" style="background:var(--conf-hi-t)"></span>
-      Spread &lt;0.5°C — models agree
+      <span class="legend-dot" style="background:#3ddc84"></span>
+      Spread &lt;0.5&#176;C &mdash; models agree
     </span>
     <span class="legend-item">
-      <span class="legend-dot" style="background:var(--conf-mid-t)"></span>
-      Spread 0.5–1.5°C — moderate uncertainty
+      <span class="legend-dot" style="background:#f5c542"></span>
+      Spread 0.5&ndash;1.5&#176;C &mdash; moderate uncertainty
     </span>
     <span class="legend-item">
-      <span class="legend-dot" style="background:var(--conf-lo-t)"></span>
-      Spread &gt;1.5°C — act on cold end
+      <span class="legend-dot" style="background:#ff7043"></span>
+      Spread &gt;1.5&#176;C &mdash; act on cold end
     </span>
     <span class="legend-item" style="margin-left:8px">
-      ▸ Click any row to expand model detail
+      &#9658; Click any row to expand model detail
     </span>
   </div>
 
@@ -448,26 +441,23 @@ footer { flex-direction: column; gap: 4px; }
 </main>
 
 <footer>
-  <span>Data: Open-Meteo · ECMWF IFS · DWD ICON · NOAA GFS · Météo-France ARPEGE · Risk classified on cold end of ensemble</span>
+  <span>Data: Open-Meteo &middot; ECMWF IFS &middot; DWD ICON &middot; NOAA GFS &middot; M&eacute;t&eacute;o-France ARPEGE &middot; Risk on cold end of ensemble</span>
   <span id="footer-time"></span>
 </footer>
 
 <script>
-// ─────────────────────────────────────────────
-// CONFIGURATION
-// ─────────────────────────────────────────────
-const SITES = [
+var SITES = [
   {
     id: 'jerzmanice',
-    name: 'Winnica Jerzmanice-Zdrój',
-    shortName: 'Jerzmanice-Zdrój',
+    name: 'Winnica Jerzmanice-Zdr\u00f3j',
+    shortName: 'Jerzmanice-Zdr\u00f3j',
     lat: 51.11, lon: 15.89,
     correction: -2.5,
-    meta: '51.11°N 15.89°E · 250m asl · Valley frost pocket',
+    meta: '51.11\u00b0N 15.89\u00b0E \u00b7 250m asl \u00b7 Valley frost pocket',
     action: {
       LOW:      'No action required. Continue monitoring.',
       MODERATE: 'Alert grower. Verify generator fuel and readiness.',
-      HIGH:     'Arrange generator delivery — 48–72h lead time required. Activate cable heating system.',
+      HIGH:     'Arrange generator delivery \u2014 48\u201372h lead time required. Activate cable heating system.',
       CRITICAL: 'IMMEDIATE generator logistics required. Full system activation essential.'
     }
   },
@@ -477,173 +467,69 @@ const SITES = [
     shortName: 'Widokowa (Kombornia)',
     lat: 49.72, lon: 21.85,
     correction: -0.8,
-    meta: '49.72°N 21.85°E · 470m asl · Exposed south-facing hillside',
+    meta: '49.72\u00b0N 21.85\u00b0E \u00b7 470m asl \u00b7 Exposed south-facing hillside',
     action: {
       LOW:      'No action required. Continue monitoring.',
       MODERATE: 'Alert grower. Advection frost at 470m is less predictable than correction factor implies.',
-      HIGH:     'Arrange generator delivery — 48–72h lead time required. Exposed elevation increases advection risk.',
+      HIGH:     'Arrange generator delivery \u2014 48\u201372h lead time required. Exposed elevation increases advection risk.',
       CRITICAL: 'IMMEDIATE generator logistics required. Full system activation essential.'
     }
   },
   {
     id: 'emi',
     name: 'Winnica Emi',
-    shortName: 'Morzęcin Wielki',
+    shortName: 'Morz\u0119cin Wielki',
     lat: 51.328, lon: 16.899,
     correction: -1.2,
-    meta: '51.33°N 16.90°E · 180m asl · Gentle lowland hills',
+    meta: '51.33\u00b0N 16.90\u00b0E \u00b7 180m asl \u00b7 Gentle lowland hills',
     action: {
       LOW:      'No action required. Continue monitoring.',
       MODERATE: 'Alert grower. Check generator readiness.',
-      HIGH:     'Arrange generator delivery — 48–72h lead time required.',
+      HIGH:     'Arrange generator delivery \u2014 48\u201372h lead time required.',
       CRITICAL: 'IMMEDIATE generator logistics required. Full system activation essential.'
     }
   }
 ];
 
-const MODELS = [
+var MODELS = [
   { key: 'ecmwf_ifs025', label: 'ECMWF IFS' },
   { key: 'icon_global',  label: 'DWD ICON'  },
   { key: 'gfs_global',   label: 'NOAA GFS'  },
-  { key: 'arpege_world', label: 'ARPEGE'    },
+  { key: 'arpege_world', label: 'ARPEGE'    }
 ];
 
-// ─────────────────────────────────────────────
-// CLASSIFICATION
-// ─────────────────────────────────────────────
-function classifyRisk(correctedMin) {
-  if (correctedMin > 0)    return 'LOW';
-  if (correctedMin > -0.5) return 'MODERATE';
-  if (correctedMin > -1.5) return 'HIGH';
+function classifyRisk(t) {
+  if (t > 0)    return 'LOW';
+  if (t > -0.5) return 'MODERATE';
+  if (t > -1.5) return 'HIGH';
   return 'CRITICAL';
 }
 
-function classifyFrostType(cloudPct, windMs) {
-  if (cloudPct < 30 && windMs < 2) return 'Radiation';
-  if (windMs > 3)                   return 'Advection';
+function classifyFrostType(cloud, windMs) {
+  if (cloud < 30 && windMs < 2) return 'Radiation';
+  if (windMs > 3)                return 'Advection';
   return 'Mixed';
 }
 
-function spreadClass(spread) {
-  if (spread < 0.5) return 'tight';
-  if (spread < 1.5) return 'medium';
+function spreadClass(s) {
+  if (s < 0.5) return 'tight';
+  if (s < 1.5) return 'medium';
   return 'wide';
 }
 
-function confidenceLabel(spread) {
-  if (spread < 0.5) return { level: 'HIGH',   text: 'Models agree — forecast reliable.' };
-  if (spread < 1.5) return { level: 'MEDIUM', text: 'Moderate uncertainty — monitor the next model run.' };
-  return             { level: 'LOW',    text: 'High uncertainty — act on the cold end of the range.' };
+function confidenceLabel(s) {
+  if (s < 0.5) return { level: 'HIGH',   text: 'Models agree \u2014 forecast reliable.' };
+  if (s < 1.5) return { level: 'MEDIUM', text: 'Moderate uncertainty \u2014 monitor the next model run.' };
+  return        { level: 'LOW',    text: 'High uncertainty \u2014 act on the cold end of the range.' };
 }
 
 function frostTypeClass(t) {
   return { Radiation: 'type-radiation', Advection: 'type-advection', Mixed: 'type-mixed' }[t] || '';
 }
 
-// ─────────────────────────────────────────────
-// DATA FETCH & PROCESSING
-// ─────────────────────────────────────────────
-async function fetchSite(site) {
-  const modelStr = MODELS.map(m => m.key).join(',');
-  const url = `https://api.open-meteo.com/v1/forecast`
-    + `?latitude=${site.lat}&longitude=${site.lon}`
-    + `&hourly=temperature_2m,cloudcover,windspeed_10m,dewpoint_2m`
-    + `&models=${modelStr}`
-    + `&timezone=Europe%2FWarsaw&forecast_days=7`;
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${site.shortName}`);
-  const data = await res.json();
-  return processEnsemble(data, site);
-}
-
-function getNightWindow(times, dayOffset) {
-  const base = new Date(times[0].substring(0, 10));
-  const nightStart = new Date(base);
-  nightStart.setDate(base.getDate() + dayOffset);
-  nightStart.setHours(22, 0, 0, 0);
-  const nightEnd = new Date(nightStart);
-  nightEnd.setDate(nightStart.getDate() + 1);
-  nightEnd.setHours(6, 0, 0, 0);
-  const indices = [];
-  times.forEach((t, i) => {
-    const dt = new Date(t);
-    if (dt >= nightStart && dt <= nightEnd) indices.push(i);
-  });
-  return { indices, nightStart, nightEnd };
-}
-
-function processEnsemble(data, site) {
-  const times = data.hourly.time;
-  const nights = [];
-
-  for (let d = 0; d < 7; d++) {
-    const { indices, nightStart, nightEnd } = getNightWindow(times, d);
-    if (!indices.length) continue;
-
-    // Per-model overnight minimums
-    const modelMins = {};
-    MODELS.forEach(m => {
-      const arr = data.hourly[`temperature_2m_${m.key}`] || data.hourly['temperature_2m'];
-      if (!arr) return;
-      const vals = indices.map(i => arr[i]).filter(v => v != null && !isNaN(v));
-      if (vals.length) modelMins[m.key] = Math.min(...vals);
-    });
-
-    const vals = Object.values(modelMins).filter(v => !isNaN(v));
-    if (!vals.length) continue;
-
-    const mean     = vals.reduce((a, b) => a + b, 0) / vals.length;
-    const coldEnd  = Math.min(...vals);
-    const warmEnd  = Math.max(...vals);
-    const spread   = warmEnd - coldEnd;
-
-    // Conditions from ECMWF or fallback
-    const cloudArr = data.hourly[`cloudcover_${MODELS[0].key}`]    || data.hourly['cloudcover']     || [];
-    const windArr  = data.hourly[`windspeed_10m_${MODELS[0].key}`] || data.hourly['windspeed_10m']  || [];
-    const dewArr   = data.hourly[`dewpoint_2m_${MODELS[0].key}`]   || data.hourly['dewpoint_2m']    || [];
-    const tempArr  = data.hourly[`temperature_2m_${MODELS[0].key}`]|| data.hourly['temperature_2m'] || [];
-
-    let minIdx = indices[0];
-    indices.forEach(i => { if ((tempArr[i] ?? Infinity) < (tempArr[minIdx] ?? Infinity)) minIdx = i; });
-
-    const avgCloud = indices.reduce((s, i) => s + (cloudArr[i] || 0), 0) / indices.length;
-    const avgWind  = indices.reduce((s, i) => s + (windArr[i]  || 0), 0) / indices.length;
-    const windMs   = avgWind / 3.6;
-    const dewpoint = dewArr[minIdx] ?? null;
-
-    const corrMean  = mean    + site.correction;
-    const corrCold  = coldEnd + site.correction;
-    const corrWarm  = warmEnd + site.correction;
-
-    const label = nightStart.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
-      + '–'
-      + nightEnd.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-
-    nights.push({
-      label,
-      corrMean, corrCold, corrWarm, spread,
-      risk: classifyRisk(corrCold),
-      frostType: classifyFrostType(avgCloud, windMs),
-      conf: confidenceLabel(spread),
-      avgCloud: Math.round(avgCloud),
-      windMs: windMs.toFixed(1),
-      dewpoint,
-      modelMins,
-      modelCorr: Object.fromEntries(
-        Object.entries(modelMins).map(([k, v]) => [k, v + site.correction])
-      )
-    });
-  }
-  return nights;
-}
-
-// ─────────────────────────────────────────────
-// FORMATTING
-// ─────────────────────────────────────────────
 function fmt(v) {
-  if (v == null || isNaN(v)) return '—';
-  return (v >= 0 ? '+' : '') + v.toFixed(1) + '°C';
+  if (v == null || isNaN(v)) return '\u2014';
+  return (v >= 0 ? '+' : '') + v.toFixed(1) + '\u00b0C';
 }
 
 function tempCls(v) {
@@ -654,220 +540,274 @@ function tempCls(v) {
 }
 
 function worstNight(nights) {
-  return nights.reduce((w, n) => n.corrCold < w.corrCold ? n : w, nights[0]);
+  return nights.reduce(function(w, n) { return n.corrCold < w.corrCold ? n : w; }, nights[0]);
 }
 
-// ─────────────────────────────────────────────
-// RENDER SUMMARY CARDS
-// ─────────────────────────────────────────────
+function getNightWindow(times, dayOffset) {
+  var base = new Date(times[0].substring(0, 10));
+  var nightStart = new Date(base);
+  nightStart.setDate(base.getDate() + dayOffset);
+  nightStart.setHours(22, 0, 0, 0);
+  var nightEnd = new Date(nightStart);
+  nightEnd.setDate(nightStart.getDate() + 1);
+  nightEnd.setHours(6, 0, 0, 0);
+  var indices = [];
+  times.forEach(function(t, i) {
+    var dt = new Date(t);
+    if (dt >= nightStart && dt <= nightEnd) indices.push(i);
+  });
+  return { indices: indices, nightStart: nightStart, nightEnd: nightEnd };
+}
+
+function processEnsemble(data, site) {
+  var times = data.hourly.time;
+  var nights = [];
+
+  for (var d = 0; d < 7; d++) {
+    var win = getNightWindow(times, d);
+    var indices = win.indices;
+    var nightStart = win.nightStart;
+    var nightEnd = win.nightEnd;
+    if (!indices.length) continue;
+
+    var modelMins = {};
+    MODELS.forEach(function(m) {
+      var arr = data.hourly['temperature_2m_' + m.key] || data.hourly['temperature_2m'];
+      if (!arr) return;
+      var vals = indices.map(function(i) { return arr[i]; }).filter(function(v) { return v != null && !isNaN(v); });
+      if (vals.length) modelMins[m.key] = Math.min.apply(null, vals);
+    });
+
+    var vals = Object.keys(modelMins).map(function(k) { return modelMins[k]; }).filter(function(v) { return !isNaN(v); });
+    if (!vals.length) continue;
+
+    var mean    = vals.reduce(function(a, b) { return a + b; }, 0) / vals.length;
+    var coldEnd = Math.min.apply(null, vals);
+    var warmEnd = Math.max.apply(null, vals);
+    var spread  = warmEnd - coldEnd;
+
+    var cloudArr = data.hourly['cloudcover_'    + MODELS[0].key] || data.hourly['cloudcover']     || [];
+    var windArr  = data.hourly['windspeed_10m_' + MODELS[0].key] || data.hourly['windspeed_10m']  || [];
+    var dewArr   = data.hourly['dewpoint_2m_'   + MODELS[0].key] || data.hourly['dewpoint_2m']    || [];
+    var tempArr  = data.hourly['temperature_2m_'+ MODELS[0].key] || data.hourly['temperature_2m'] || [];
+
+    var minIdx = indices[0];
+    indices.forEach(function(i) {
+      if ((tempArr[i] != null ? tempArr[i] : Infinity) < (tempArr[minIdx] != null ? tempArr[minIdx] : Infinity)) minIdx = i;
+    });
+
+    var avgCloud = indices.reduce(function(s, i) { return s + (cloudArr[i] || 0); }, 0) / indices.length;
+    var avgWind  = indices.reduce(function(s, i) { return s + (windArr[i]  || 0); }, 0) / indices.length;
+    var windMs   = avgWind / 3.6;
+    var dewpoint = dewArr[minIdx] != null ? dewArr[minIdx] : null;
+
+    var modelCorr = {};
+    Object.keys(modelMins).forEach(function(k) { modelCorr[k] = modelMins[k] + site.correction; });
+
+    var label = nightStart.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+      + '\u2013'
+      + nightEnd.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+    nights.push({
+      label:      label,
+      corrMean:   mean    + site.correction,
+      corrCold:   coldEnd + site.correction,
+      corrWarm:   warmEnd + site.correction,
+      spread:     spread,
+      risk:       classifyRisk(coldEnd + site.correction),
+      frostType:  classifyFrostType(avgCloud, windMs),
+      conf:       confidenceLabel(spread),
+      avgCloud:   Math.round(avgCloud),
+      windMs:     windMs.toFixed(1),
+      dewpoint:   dewpoint,
+      modelMins:  modelMins,
+      modelCorr:  modelCorr
+    });
+  }
+  return nights;
+}
+
+async function fetchSite(site) {
+  var modelStr = MODELS.map(function(m) { return m.key; }).join(',');
+  var url = 'https://api.open-meteo.com/v1/forecast'
+    + '?latitude=' + site.lat + '&longitude=' + site.lon
+    + '&hourly=temperature_2m,cloudcover,windspeed_10m,dewpoint_2m'
+    + '&models=' + modelStr
+    + '&timezone=Europe%2FWarsaw&forecast_days=7';
+  var res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status + ' for ' + site.shortName);
+  var data = await res.json();
+  return processEnsemble(data, site);
+}
+
 function renderSummaryCard(site, nights) {
-  const worst = worstNight(nights);
-  const sc    = spreadClass(worst.spread);
-  const card  = document.createElement('div');
-  card.className = `summary-card card-${worst.risk}`;
-  card.innerHTML = `
-    <div class="site-name">${site.shortName}</div>
-    <div class="worst-night ${tempCls(worst.corrCold)}">${fmt(worst.corrCold)}</div>
-    <div class="worst-label">cold-end corrected min · ${worst.label}</div>
-    <div class="spread-note">
-      mean ${fmt(worst.corrMean)} &nbsp;·&nbsp;
-      spread <span class="spread-pill spread-${sc}">±${(worst.spread / 2).toFixed(1)}°C</span>
-    </div>
-    <div class="risk-badge risk-${worst.risk}">${worst.risk}</div>
-  `;
-  setTimeout(() => card.classList.add('visible'), 50);
+  var worst = worstNight(nights);
+  var sc    = spreadClass(worst.spread);
+  var card  = document.createElement('div');
+  card.className = 'summary-card card-' + worst.risk;
+  card.innerHTML =
+    '<div class="site-name">' + site.shortName + '</div>' +
+    '<div class="worst-night ' + tempCls(worst.corrCold) + '">' + fmt(worst.corrCold) + '</div>' +
+    '<div class="worst-label">cold-end corrected min &middot; ' + worst.label + '</div>' +
+    '<div class="spread-note">mean ' + fmt(worst.corrMean) + ' &nbsp;&middot;&nbsp; spread ' +
+      '<span class="spread-pill spread-' + sc + '">&plusmn;' + (worst.spread / 2).toFixed(1) + '&deg;C</span>' +
+    '</div>' +
+    '<div class="risk-badge risk-' + worst.risk + '">' + worst.risk + '</div>';
+  setTimeout(function() { card.classList.add('visible'); }, 50);
   return card;
 }
 
-// ─────────────────────────────────────────────
-// RENDER SITE SECTION
-// ─────────────────────────────────────────────
 function renderSiteSection(site, nights) {
-  const worst = worstNight(nights);
-  const section = document.createElement('div');
+  var worst   = worstNight(nights);
+  var section = document.createElement('div');
   section.className = 'site-section';
 
-  const rowsHTML = nights.map((n, idx) => {
-    const sc = spreadClass(n.spread);
+  var rowsHTML = nights.map(function(n, idx) {
+    var sc = spreadClass(n.spread);
 
-    // Find coldest and warmest model keys
-    const mVals = Object.entries(n.modelMins).filter(([, v]) => !isNaN(v));
-    const coldestKey = mVals.reduce((a, b) => b[1] < a[1] ? b : a, mVals[0])?.[0];
-    const warmestKey = mVals.reduce((a, b) => b[1] > a[1] ? b : a, mVals[0])?.[0];
+    var mEntries = Object.keys(n.modelMins).map(function(k) { return [k, n.modelMins[k]]; }).filter(function(e) { return !isNaN(e[1]); });
+    var coldestKey = mEntries.reduce(function(a, b) { return b[1] < a[1] ? b : a; }, mEntries[0])[0];
+    var warmestKey = mEntries.reduce(function(a, b) { return b[1] > a[1] ? b : a; }, mEntries[0])[0];
 
-    const modelRows = MODELS.map(m => {
-      const raw  = n.modelMins[m.key];
-      const corr = n.modelCorr[m.key];
-      const isColdest = m.key === coldestKey;
-      const isWarmest = m.key === warmestKey && coldestKey !== warmestKey;
-      const rowCls = isColdest ? 'model-coldest' : isWarmest ? 'model-warmest' : '';
-      const marker = isColdest ? ' ▴cold' : isWarmest ? ' ▾warm' : '';
-      return `<tr>
-        <td class="${rowCls}">${m.label}${marker}</td>
-        <td class="${rowCls}">${fmt(raw)}</td>
-        <td class="${tempCls(corr)}">${fmt(corr)}</td>
-      </tr>`;
+    var modelRows = MODELS.map(function(m) {
+      var raw  = n.modelMins[m.key];
+      var corr = n.modelCorr[m.key];
+      var isColdest = m.key === coldestKey;
+      var isWarmest = m.key === warmestKey && coldestKey !== warmestKey;
+      var rowCls = isColdest ? 'model-coldest' : isWarmest ? 'model-warmest' : '';
+      var marker = isColdest ? ' \u25b4cold' : isWarmest ? ' \u25bewarm' : '';
+      return '<tr>' +
+        '<td class="' + rowCls + '">' + m.label + marker + '</td>' +
+        '<td class="' + rowCls + '">' + fmt(raw) + '</td>' +
+        '<td class="' + tempCls(corr) + '">' + fmt(corr) + '</td>' +
+        '</tr>';
     }).join('');
 
-    const confIcon = { HIGH: '✓', MEDIUM: '△', LOW: '⚠' }[n.conf.level];
+    var confIcons = { HIGH: '\u2713', MEDIUM: '\u25b3', LOW: '\u26a0' };
+    var confIcon  = confIcons[n.conf.level];
 
-    const summaryRow = `
-      <tr class="row-summary" data-idx="${idx}" data-site="${site.id}">
-        <td><span class="expand-icon">▶</span>${n.label}</td>
-        <td class="${tempCls(n.corrMean)}">${fmt(n.corrMean)}</td>
-        <td class="${tempCls(n.corrCold)}">${fmt(n.corrCold)}</td>
-        <td><span class="spread-pill spread-${sc}">±${(n.spread / 2).toFixed(1)}°C</span></td>
-        <td class="${frostTypeClass(n.frostType)}">${n.frostType}</td>
-        <td><span class="risk-cell risk-${n.risk}">${n.risk}</span></td>
-      </tr>`;
+    var summaryRow =
+      '<tr class="row-summary" data-idx="' + idx + '" data-site="' + site.id + '">' +
+        '<td><span class="expand-icon">&#9658;</span>' + n.label + '</td>' +
+        '<td class="' + tempCls(n.corrMean) + '">' + fmt(n.corrMean) + '</td>' +
+        '<td class="' + tempCls(n.corrCold) + '">' + fmt(n.corrCold) + '</td>' +
+        '<td><span class="spread-pill spread-' + sc + '">&plusmn;' + (n.spread / 2).toFixed(1) + '&deg;C</span></td>' +
+        '<td class="' + frostTypeClass(n.frostType) + '">' + n.frostType + '</td>' +
+        '<td><span class="risk-cell risk-' + n.risk + '">' + n.risk + '</span></td>' +
+      '</tr>';
 
-    const detailRow = `
-      <tr class="row-detail" data-detail="${idx}-${site.id}">
-        <td colspan="6">
-          <div class="detail-inner">
-            <div class="detail-grid">
-              <div>
-                <div class="detail-section-title">Model breakdown</div>
-                <table class="model-table">
-                  <thead><tr>
-                    <th>Model</th><th>Fcst min</th><th>Corrected</th>
-                  </tr></thead>
-                  <tbody>${modelRows}</tbody>
-                </table>
-                <div class="confidence-block conf-${n.conf.level}">
-                  ${confIcon} ${n.conf.text}
-                </div>
-              </div>
-              <div>
-                <div class="detail-section-title">Night conditions (ECMWF)</div>
-                <div class="conditions-list">
-                  <div class="cond-row">
-                    <span class="cond-label">Cloud cover</span>
-                    <span class="cond-value">${n.avgCloud}%</span>
-                  </div>
-                  <div class="cond-row">
-                    <span class="cond-label">Wind speed</span>
-                    <span class="cond-value">${n.windMs} m/s</span>
-                  </div>
-                  <div class="cond-row">
-                    <span class="cond-label">Dewpoint</span>
-                    <span class="cond-value">${fmt(n.dewpoint)}</span>
-                  </div>
-                  <div class="cond-row">
-                    <span class="cond-label">Frost type</span>
-                    <span class="cond-value ${frostTypeClass(n.frostType)}">${n.frostType}</span>
-                  </div>
-                  <div class="cond-row">
-                    <span class="cond-label">Correction applied</span>
-                    <span class="cond-value">${site.correction > 0 ? '+' : ''}${site.correction}°C</span>
-                  </div>
-                  <div class="cond-row">
-                    <span class="cond-label">Ensemble range</span>
-                    <span class="cond-value">${fmt(n.corrCold)} → ${fmt(n.corrWarm)}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </td>
-      </tr>`;
+    var detailRow =
+      '<tr class="row-detail" data-detail="' + idx + '-' + site.id + '">' +
+        '<td colspan="6">' +
+          '<div class="detail-inner">' +
+            '<div class="detail-grid">' +
+              '<div>' +
+                '<div class="detail-section-title">Model breakdown</div>' +
+                '<table class="model-table">' +
+                  '<thead><tr><th>Model</th><th>Fcst min</th><th>Corrected</th></tr></thead>' +
+                  '<tbody>' + modelRows + '</tbody>' +
+                '</table>' +
+                '<div class="confidence-block conf-' + n.conf.level + '">' + confIcon + ' ' + n.conf.text + '</div>' +
+              '</div>' +
+              '<div>' +
+                '<div class="detail-section-title">Night conditions (ECMWF)</div>' +
+                '<div class="conditions-list">' +
+                  '<div class="cond-row"><span class="cond-label">Cloud cover</span><span class="cond-value">' + n.avgCloud + '%</span></div>' +
+                  '<div class="cond-row"><span class="cond-label">Wind speed</span><span class="cond-value">' + n.windMs + ' m/s</span></div>' +
+                  '<div class="cond-row"><span class="cond-label">Dewpoint</span><span class="cond-value">' + fmt(n.dewpoint) + '</span></div>' +
+                  '<div class="cond-row"><span class="cond-label">Frost type</span><span class="cond-value ' + frostTypeClass(n.frostType) + '">' + n.frostType + '</span></div>' +
+                  '<div class="cond-row"><span class="cond-label">Correction</span><span class="cond-value">' + (site.correction > 0 ? '+' : '') + site.correction + '&deg;C</span></div>' +
+                  '<div class="cond-row"><span class="cond-label">Ensemble range</span><span class="cond-value">' + fmt(n.corrCold) + ' \u2192 ' + fmt(n.corrWarm) + '</span></div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</td>' +
+      '</tr>';
 
     return summaryRow + detailRow;
   }).join('');
 
-  section.innerHTML = `
-    <div class="site-header">
-      <h2>${site.name}</h2>
-      <span class="site-meta">${site.meta} · correction ${site.correction > 0 ? '+' : ''}${site.correction}°C</span>
-    </div>
-    <table class="forecast-table">
-      <thead>
-        <tr>
-          <th>Night</th>
-          <th>Mean corr.</th>
-          <th>Cold end ▾</th>
-          <th>Spread</th>
-          <th>Type</th>
-          <th>Risk</th>
-        </tr>
-      </thead>
-      <tbody>${rowsHTML}</tbody>
-    </table>
-    <div class="action-box">▸ ${site.action[worst.risk]}</div>
-  `;
+  section.innerHTML =
+    '<div class="site-header">' +
+      '<h2>' + site.name + '</h2>' +
+      '<span class="site-meta">' + site.meta + ' &middot; correction ' + (site.correction > 0 ? '+' : '') + site.correction + '&deg;C</span>' +
+    '</div>' +
+    '<table class="forecast-table">' +
+      '<thead><tr>' +
+        '<th>Night</th>' +
+        '<th>Mean corr.</th>' +
+        '<th>Cold end &#9660;</th>' +
+        '<th>Spread</th>' +
+        '<th>Type</th>' +
+        '<th>Risk</th>' +
+      '</tr></thead>' +
+      '<tbody>' + rowsHTML + '</tbody>' +
+    '</table>' +
+    '<div class="action-box">&#9658; ' + site.action[worst.risk] + '</div>';
 
-  // Wire expand/collapse
-  section.querySelectorAll('.row-summary').forEach(row => {
-    row.addEventListener('click', () => {
-      const detail = section.querySelector(`[data-detail="${row.dataset.idx}-${site.id}"]`);
-      const opening = !detail.classList.contains('open');
+  section.querySelectorAll('.row-summary').forEach(function(row) {
+    row.addEventListener('click', function() {
+      var detail  = section.querySelector('[data-detail="' + row.dataset.idx + '-' + site.id + '"]');
+      var opening = !detail.classList.contains('open');
       detail.classList.toggle('open', opening);
       row.classList.toggle('expanded', opening);
     });
   });
 
-  setTimeout(() => section.classList.add('visible'), 100);
+  setTimeout(function() { section.classList.add('visible'); }, 100);
   return section;
 }
 
-// ─────────────────────────────────────────────
-// ALERT BANNER
-// ─────────────────────────────────────────────
 function renderAlertBanner(allResults) {
-  const banner = document.getElementById('alert-banner');
-  const urgent = [];
-  allResults.forEach(({ site, nights }) => {
-    nights.slice(0, 3).forEach(n => {
+  var banner = document.getElementById('alert-banner');
+  var urgent = [];
+  allResults.forEach(function(r) {
+    r.nights.slice(0, 3).forEach(function(n) {
       if (n.risk === 'HIGH' || n.risk === 'CRITICAL') {
-        urgent.push(`${site.shortName} · ${n.label} · ${n.risk} (cold end ${fmt(n.corrCold)})`);
+        urgent.push(r.site.shortName + ' \u00b7 ' + n.label + ' \u00b7 ' + n.risk + ' (cold end ' + fmt(n.corrCold) + ')');
       }
     });
   });
   if (urgent.length) {
     banner.style.display = 'block';
-    banner.classList.toggle('critical', urgent.some(u => u.includes('CRITICAL')));
-    banner.innerHTML = `⚠ GENERATOR ACTION REQUIRED WITHIN 72H<br>${urgent.join('<br>')}`;
+    banner.classList.toggle('critical', urgent.some(function(u) { return u.indexOf('CRITICAL') >= 0; }));
+    banner.innerHTML = '\u26a0 GENERATOR ACTION REQUIRED WITHIN 72H<br>' + urgent.join('<br>');
   }
 }
 
-// ─────────────────────────────────────────────
-// MAIN
-// ─────────────────────────────────────────────
 async function main() {
-  const dot        = document.getElementById('status-dot');
-  const statusTxt  = document.getElementById('status-text');
-  const strip      = document.getElementById('summary-strip');
-  const container  = document.getElementById('sites-container');
-  const footerTime = document.getElementById('footer-time');
+  var dot        = document.getElementById('status-dot');
+  var statusTxt  = document.getElementById('status-text');
+  var strip      = document.getElementById('summary-strip');
+  var container  = document.getElementById('sites-container');
+  var footerTime = document.getElementById('footer-time');
 
   dot.className = 'loading';
-
   footerTime.textContent = 'Generated ' + new Date().toLocaleString('en-GB', {
     day: 'numeric', month: 'short', year: 'numeric',
     hour: '2-digit', minute: '2-digit', timeZoneName: 'short'
   });
 
   try {
-    const allResults = [];
-
-    for (const site of SITES) {
-      statusTxt.textContent = `Fetching ${site.shortName}…`;
-      const nights = await fetchSite(site);
-      allResults.push({ site, nights });
+    var allResults = [];
+    for (var i = 0; i < SITES.length; i++) {
+      var site = SITES[i];
+      statusTxt.textContent = 'Fetching ' + site.shortName + '\u2026';
+      var nights = await fetchSite(site);
+      allResults.push({ site: site, nights: nights });
       strip.appendChild(renderSummaryCard(site, nights));
       container.appendChild(renderSiteSection(site, nights));
     }
-
     renderAlertBanner(allResults);
     dot.className = 'ok';
-    statusTxt.textContent = 'Live · ECMWF · ICON · GFS · ARPEGE';
-
-  } catch (err) {
+    statusTxt.textContent = 'Live \u00b7 ECMWF \u00b7 ICON \u00b7 GFS \u00b7 ARPEGE';
+  } catch(err) {
     dot.className = 'error';
     statusTxt.textContent = 'Fetch failed';
-    const errDiv = document.getElementById('error-msg');
+    var errDiv = document.getElementById('error-msg');
     errDiv.style.display = 'block';
-    errDiv.textContent = `Failed to load forecast data: ${err.message}. Check network or try again.`;
+    errDiv.textContent = 'Failed to load forecast data: ' + err.message + '. Check network or try again.';
     console.error(err);
   }
 }
